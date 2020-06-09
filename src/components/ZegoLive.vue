@@ -4,8 +4,10 @@
 
         <div>
             <label>音频</label>
-            <select v-for="item in videoDeviceList" :key="item.deviceID">
-                <option :value="item.deviceID">{{item.deviceName}}</option>
+            <select>
+                <option v-for="item in videoDeviceList" :key="item.deviceID" v-bind:value="item.deviceID">
+                    {{item.deviceName}}
+                </option>
             </select>
         </div>
 
@@ -35,16 +37,19 @@
         public $refs!: {
             lv: HTMLVideoElement
         }
-        videoDeviceList: { deviceID: string, deviceName: string }[] = [];
+        videoDeviceList: any[] = [{
+            deviceID: '11111',
+            deviceName: 'test'
+        }];
 
 
         constructor() {
             super();
 
-            zg.enumDevices().then(res => {
-                const {microphones, cameras, speakers} = res;
-                this.videoDeviceList = microphones;
-            })
+            // zg.enumDevices().then(res => {
+            //     const {microphones, cameras, speakers} = res;
+            //     this.videoDeviceList = cameras;
+            // })
 
             const userID = "live" + new Date().getTime();
 
