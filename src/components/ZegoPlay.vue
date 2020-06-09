@@ -1,7 +1,7 @@
 <template>
 
     <div clas="container">
-        <video ref="previewVideo" autoplay muted></video>
+        <video ref="previewVideo" autoplay muted playsinline></video>
     </div>
 </template>
 
@@ -28,6 +28,26 @@
         constructor() {
             super();
 
+            zg.on('roomStateUpdate', (roomID, state, errorCode, extendData) => {
+                console.log('更新房间状态：' + roomID);
+            });
+
+            zg.on('roomStreamUpdate', (roomID, state, streamList) => {
+                console.log('更新房间状态：' + roomID, state, streamList);
+
+                if (streamList && streamList.length > 0) {
+
+                    streamList.forEach(item => {
+                        const {streamID} = item;
+
+                        zg.startPlayingStream(streamID).then(pullStream => {
+                            this.$refs.previewVideo.srcObject = pullStream;
+                        })
+
+                    })
+                }
+            })
+
             const userID = "player" + new Date().getTime();
 
             fetch(config.tokenUrl + "?app_id=" + config.appId + "&id_name=" + userID, {
@@ -41,12 +61,12 @@
 
                             if (loginSuccess) {
 
-                                zg.startPlayingStream('20190609000').then(pullStream => {
-
-                                    this.$refs.previewVideo.srcObject = pullStream;
-                                }).catch(err => {
-                                    alert('拉流失败');
-                                })
+                                // zg.startPlayingStream('20190609000').then(pullStream => {
+                                //
+                                //     this.$refs.previewVideo.srcObject = pullStream;
+                                // }).catch(err => {
+                                //     alert('拉流失败');
+                                // })
                             }
                         }).catch(err => {
                         alert("登录房间失败");
